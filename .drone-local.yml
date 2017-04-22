@@ -67,8 +67,18 @@ services:
 
 matrix:
   include:
+    # pq
     - {
         GO: "golang:1.8", DATABASE: postgres, VERSION: 9.6, REFORM_DRIVER: postgres,
+        REFORM_ROOT_SOURCE: "postgres://postgres@127.0.0.1/template1?sslmode=disable",
+        REFORM_INIT_SOURCE: "postgres://postgres@127.0.0.1/reform-database?sslmode=disable&TimeZone=UTC",
+        REFORM_TEST_SOURCE: "postgres://postgres@127.0.0.1/reform-database?sslmode=disable&TimeZone=America/New_York",
+        DOWNLOAD_DEPS: 1
+      }
+
+    # pgx
+    - {
+        GO: "golang:1.8", DATABASE: postgres, VERSION: 9.6, REFORM_DRIVER: pgx,
         REFORM_ROOT_SOURCE: "postgres://postgres@127.0.0.1/template1?sslmode=disable",
         REFORM_INIT_SOURCE: "postgres://postgres@127.0.0.1/reform-database?sslmode=disable&TimeZone=UTC",
         REFORM_TEST_SOURCE: "postgres://postgres@127.0.0.1/reform-database?sslmode=disable&TimeZone=America/New_York",

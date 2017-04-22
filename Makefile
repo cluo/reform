@@ -1,4 +1,4 @@
-all: test postgres mysql sqlite3 check
+all: test postgres pgx mysql sqlite3 check
 
 # extra flags like -v
 REFORM_TEST_FLAGS ?=
@@ -8,6 +8,7 @@ REFORM_TEST_FLAGS ?=
 download_deps:
 	# download drivers
 	go get -v -u -d github.com/lib/pq \
+		github.com/jackc/pgx/stdlib \
 		github.com/go-sql-driver/mysql \
 		github.com/mattn/go-sqlite3 \
 		github.com/denisenkom/go-mssqldb
@@ -63,13 +64,22 @@ check:
 drone:
 	drone exec --repo.trusted .drone-local.yml
 
-# create local PostgreSQL database and run tests
+# create local PostgreSQL database and run tests with postgres driver
 postgres: export DATABASE = postgres
 postgres: export REFORM_DRIVER = postgres
 postgres: export REFORM_ROOT_SOURCE = postgres://localhost/template1?sslmode=disable
 postgres: export REFORM_INIT_SOURCE = postgres://localhost/reform-database?sslmode=disable&TimeZone=UTC
 postgres: export REFORM_TEST_SOURCE = postgres://localhost/reform-database?sslmode=disable&TimeZone=America/New_York
 postgres: test
+	make test-db
+
+# create local PostgreSQL database and run tests with pgx driver
+pgx: export DATABASE = postgres
+pgx: export REFORM_DRIVER = pgx
+pgx: export REFORM_ROOT_SOURCE = postgres://localhost/template1?sslmode=disable
+pgx: export REFORM_INIT_SOURCE = postgres://localhost/reform-database?sslmode=disable&TimeZone=UTC
+pgx: export REFORM_TEST_SOURCE = postgres://localhost/reform-database?sslmode=disable&TimeZone=America/New_York
+pgx: test
 	make test-db
 
 # create local MySQL database and run tests
